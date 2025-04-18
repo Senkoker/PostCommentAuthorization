@@ -1,0 +1,53 @@
+type Post{
+    id: String!
+    author_id TEXT NOT NULL ,
+    tag_ids []TEXT,
+    content BSON NOT NULL,
+    crated_at TIMESTAMP NOT NULL ,
+    watched INTEGER NOT NULL,
+    likes INTEGER NOT NOT NULL
+}
+
+type Post_Content {
+    title: String!
+    text: String!
+    img_url: String!
+}
+
+type Author {
+    id: ID!
+    first_name: String!
+    second_name: String!
+    img_url: String!
+}
+
+type comment {
+  reply_to: String!
+  img_person_url: String!
+  author_id: String!
+  author: Author!
+  content: Co
+  created_at:
+}
+
+type Main_comment {
+    id: ID!
+    post_id: String!
+    author_id: String!
+    author: Author!
+    content: Content!
+    createdAt: Timestamp!
+    comments: [comment!]!
+}
+
+input NewPost{
+    content: Content!
+}
+
+type Mutation {
+    createVideo(input: NewVideo!): Video!
+}
+
+type Query {
+    Videos(limit: Int = 25, offset: Int = 0): [Video!]!
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Photo with Metadata</title>
+</head>
+<body>
+<input type="text" id="authToken" placeholder="Auth Token">
+<input type="text" id="hashtags" placeholder="hashtags">
+<input type="text" id="content" placeholder="content">
+<input type="text" id="private" placeholder="private">
+<input type="file" id="photoInput" accept="image/*">
+<button onclick="uploadPhoto()">Upload</button>
+
+<script>
+    async function uploadPhoto() {
+        const fileInput = document.getElementById('photoInput');
+        const tokenInput = document.getElementById('authToken');
+        const content = document.getElementById('content')
+        const hashtags = document.getElementById('hashtags');
+        const private = document.getElementById('private');
+
+        const file = fileInput.files[0];
+        const token = tokenInput.value;
+        const contentValue = content.value;
+        const hashtagsValue = hashtags.value
+        const privateValue = private.value
+
+        if (!file || !token) {
+            alert('Please select a file and provide token');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('hashtags', hashtagsValue);
+        formData.append('content', contentValue);
+        formData.append('img', file);
+        formData.append('private',privateValue)
+
+        try {
+            const response = await fetch('http://localhost:8082/feed/create_post', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(`Upload successful! ${result.message}`);
+            } else {
+                alert(`Error: ${result.error}`);
+            }
+        } catch (error) {
+            alert(`Network error: ${error.message}`);
+        }
+    }
+</script>
+</body>
+</html>

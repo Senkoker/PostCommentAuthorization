@@ -1,0 +1,513 @@
+openapi: 3.0.0
+info:
+  title: Сервис постов
+  version: 1.0.0
+paths:
+  /feed/get_posts:
+    get:
+      summary: получение постов адаптированных под пользователя
+      parameters:
+        - in: header
+          name: token
+          description: токен пользователя
+          schema:
+            type: string
+            example: "user_token"
+        - in: query
+          name: hashtag
+          description: поиск постов по хэштегу
+          required: true
+          schema:
+            type: string
+            example: "@Работа"
+      responses:
+        '200':
+          description: посты интересные для пользователя
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    post_id:
+                      type: integer
+                      description: Идентификатор поста
+                    img_person_url:
+                      type: string
+                      description: ссылка на фото профиля автора поста
+                    author:
+                      type: string
+                      description: имя пользователя поста
+                    author_id:
+                      type: integer
+                      description: id пользователя для перехода на профиль
+                    tag_ids:
+                      type: array
+                      description: Идентификаторы тэгов
+                      items:
+                        type: string
+                    content:
+                      type: object
+                      description: Содержимое баннера
+                      additionalProperties: true
+                      example: '{"title": "some_title", "text": "some_text", "img_url": "some_url"}'
+                    created_at:
+                      type: string
+                      format: date-time
+                      description: Дата создания баннера
+                    comments:
+                      type: string
+                      description: идентификатор коментариев поста
+                    watched:
+                      type: integer
+                      description: число просмотров пользователями
+                    likes:
+                      type: integer
+                      description: число лайков
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '404':
+          description: Баннер
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /feed/get_comments:
+    get:
+      summary: получение коментов поста
+      parameters:
+        - in: header
+          name: token
+          description: Токен пользователя
+          schema:
+            type: string
+            example: "user_token"
+        - in: query
+          name: id_comment
+          description: id комментария
+          schema:
+            type: integer
+            example: 124124
+      responses:
+        '200':
+          description: коментарии под постом
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id_post:
+                      type: integer
+                      description: Идентификатор поста
+                    img_person_url:
+                      type: string
+                      description: ссылка на фото профиля автора поста
+                    author:
+                      type: string
+                      description: имя пользователя поста
+                    author_id:
+                      type: integer
+                      description: id пользователя для перехода на профиль
+                    content:
+                      type: object
+                      description: Содержимое поста
+                      additionalProperties: true
+                      example: '{"text": "some_text", "img_url": "some_url"}'
+                    created_at:
+                      type: string
+                      format: date-time
+                      description: Дата создания баннера
+                    comments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          reply_to:
+                            type: string
+                            description: id кому обращается пользователь
+                          img_person_url:
+                            type: string
+                            description: ссылка на фото профиля автора поста
+                          author:
+                            type: string
+                            description: имя пользователя поста
+                          author_id:
+                            type: integer
+                            description: id пользователя для перехода на профиль
+                          content:
+                            type: object
+                            description: Содержимое поста
+                            additionalProperties: true
+                            example: '{"text": "some_text", "img_url": "some_url"}'
+                          created_at:
+                            type: string
+                            format: date-time
+                            description: Дата создания баннера
+
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '404':
+          description: комментарии не найдены
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /feed/create_post:
+    post:
+      summary: Создание нового поста
+      parameters:
+        - in: header
+          name: token
+          description: Токен пользователя
+          schema:
+            type: string
+            example: "token"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hashtags:
+                  type: string
+                  description: название хэштэга
+                content:
+                  type: object
+                  description: Содержимое баннера
+                  additionalProperties: true
+                  example: '{"title": "some_title", "text": "some_text", "img_url": "some_url"}'
+                private:
+                  type: boolean
+                  description: устанавливает статус
+      responses:
+        '201':
+          description: вернуть id поста
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: индентификатор поста
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /feed/create_comm:
+    post:
+      summary: отпправляем коментарии под пост
+      parameters:
+        - in: header
+          name: token
+          required: true
+          schema:
+            type: string
+            description:  токен пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reply_to:
+                  type: string
+                  description: содержит id пользователя, которому пишется письмо
+                content:
+                  type: object
+                  example: "text: some txt, img_url_come_url"
+                created_at:
+                  type: string
+                  description: date data
+      responses:
+        '200':
+          description: Возращает id комментария
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: id комментария
+
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '404':
+          description: Баннер не найден
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /feed/my_posts/:
+    get:
+      summary: получение всех постов пользователя
+      parameters:
+        - in: query
+          name: token
+          description: токен пользовтеля
+          schema:
+            type: string
+            example: "user_token"
+      responses:
+        '200':
+          description: посты интересные для пользователя
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    post_id:
+                      type: integer
+                      description: Идентификатор поста
+                    img_person_url:
+                      type: string
+                      description: ссылка на фото профиля автора поста
+                    author:
+                      type: string
+                      description: имя пользователя поста
+                    author_id:
+                      type: integer
+                      description: id пользователя для перехода на профиль
+                    tag_ids:
+                      type: array
+                      description: Идентификаторы тэгов
+                      items:
+                        type: string
+                    content:
+                      type: object
+                      description: Содержимое баннера
+                      additionalProperties: true
+                      example: '{"title": "some_title", "text": "some_text", "img_url": "some_url"}'
+                    created_at:
+                      type: string
+                      format: date-time
+                      description: Дата создания баннера
+                    comments:
+                      type: string
+                      description: идентификатор коментариев поста
+                    watched:
+                      type: integer
+                      description: число просмотров пользователями
+                    likes:
+                      type: integer
+                      description: число лайков
+        '204':
+          description: пост успешно удален
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '404':
+          description: пост для удаления не найден
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+    delete:
+      summary: Удаление поста по идентификатору
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: Идентификатор поста
+        - in: header
+          name: token
+          description: токен пользователя
+          schema:
+            type: string
+            example: "user_token"
+      responses:
+        '204':
+          description: пост успешно удален
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '404':
+          description: пост для удаления не найден
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /profile/:
+    get:
+      summary: получение данных о пользователе
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+            description:  токен пользователя
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: id пользователя
+      responses:
+        '200':
+          description: ответ на запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profile_img:
+                    type: string
+                    description: url на профиль пользователя
+                  first_name:
+                    type: string
+                    description: Фамилия пользователя
+                  second_name:
+                    type: string
+                    description: Имя пользователя
+                  third_name:
+                    type: string
+                    description: Отчество пользователя
+                  birthday:
+                    type: string
+                    example: 21.02.2004
+                  city:
+                    type: string
+                    description: Город проживания
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Пользователь не авторизован
+        '403':
+          description: Пользователь не имеет доступа
+        '404':
+          description: профиль не найден
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+
+
+
+
+
+
+
