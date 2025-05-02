@@ -1,0 +1,107 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: initial;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    overflow: initial /* Отключаем прокрутку для всей страницы */
+}
+.center{
+    overflow: hidden;
+    grid-column: 4/13 ;
+    height: 100vh;
+    width: 100%;
+}
+#profile{
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+    grid-template-rows: repeat(12,1fr);
+}
+
+.userPhoto{
+    border: 1px solid black;
+    border-radius: 4px ;
+    grid-column: 1/6;
+    grid-row: 1/10;
+}
+
+.userInformationContainer{
+    grid-column: 6/13;
+    grid-row: 1/6;
+}
+
+.userInformation{
+    border: 1px solid black;
+    border-radius: 4px ;
+    list-style: none;
+    padding: 1px;
+}
+.userInformation>li{
+    margin-bottom: 10px;
+    margin-top:10px;
+}
+
+.footerInfo{
+    display: flex;
+    flex-direction: row;
+    row-gap: 40px;
+}
+.userSubsPhoto{
+    height: 400px;
+    grid-column: 1/6;
+    grid-row:10/13 ;
+    border: 1px solid black;
+    border-radius: 4px ;
+}
+
+.headerUserSubsPhoto{
+    border-bottom: 1px solid black;
+}
+.headerUserSubsPhoto>span{
+    margin-left: 3px;
+    margin-right:3px;
+}
+.photos:hover{
+    background-color: gray;
+    border-radius: 2px;
+}
+
+.activebtn{
+    border: 1px solid black;
+    border-radius: 2px;
+    border-bottom: 3px solid white;
+    pointer-events: none;
+}
+.subs:hover{
+    background-color: gray;
+    border-radius: 2px;
+}
+.userFriends{
+    margin-left: 20px;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+.menuFriend>p{
+ margin: 5px;
+}
+
+.friend>img{
+    margin: 5px;
+    margin-left: 25px;
+    max-width: 200px;
+    max-height: 75px;
+    border-radius: 30%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.listFriends{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+

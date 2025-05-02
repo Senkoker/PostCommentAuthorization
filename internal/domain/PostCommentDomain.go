@@ -20,6 +20,19 @@ func subtractSlices(main []string, toRemove []string) []string {
 	}
 	return result
 }
+func uniqueSlice(slice []string) []string {
+	keys := make(map[string]bool)
+	list := make([]string, 0, len(slice))
+	for _, entry := range slice {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+		}
+	}
+	for entry, _ := range keys {
+		list = append(list, entry)
+	}
+	return list
+}
 
 type Domain struct {
 	PostgresPostComment PostgresPostAndCommentInterface
@@ -94,13 +107,18 @@ func (d *Domain) FeedGetPosts(interestPostIds []string) ([]models.Post, error) {
 	op := "FeedGetPost"
 	localLogger := logger.GetLogger().With("op", op)
 	posts, postIds, redisErr := d.Redis.GetPostHash(interestPostIds)
+	if redisErr != nil {
+		localLogger.Error("Problem get post hash", "err", redisErr)
+
+	}
 	interestPostIds = subtractSlices(interestPostIds, postIds)
 	var popularPost []models.Post
 	var userInfo map[string]models.UserInfo
 	if interestPostIds != nil {
 		postgresPosts, users, err := d.PostgresPostComment.GetPosts(interestPostIds)
+		users = uniqueSlice(users)
 		if err != nil && redisErr != nil {
-			localLogger.Error("Redis error", "err", err)
+			localLogger.Error("Redis error", "err", redisErr)
 			localLogger.Error("Postgres error", "err", err)
 			return nil, err
 		} else if err != nil {
@@ -121,7 +139,9 @@ func (d *Domain) FeedGetPosts(interestPostIds []string) ([]models.Post, error) {
 			}
 			if i == (len(postgresPosts) - 1) {
 				err = d.Redis.CreatePopularPostHash(popularPost)
-				localLogger.Error("Problem to sent post in Redis", "err", err)
+				if err != nil {
+					localLogger.Error("Problem to sent post in Redis", "err", err)
+				}
 			}
 		}
 		posts = append(posts, postgresPosts...)
@@ -142,6 +162,8 @@ func (d *Domain) FeedGetPostsWithHashtag(hashtags []string, limit, offset, redis
 			logger.Error("Problem get Post with hashtags", "err", err.Error())
 			return nil, err
 		}
+		logger.Error("Problem get Post with hashtags", "err", err.Error())
+		return nil, err
 	}
 	usersInfo, err := d.PostgresUserInfo.GetUserInfo(users)
 	if err != nil {

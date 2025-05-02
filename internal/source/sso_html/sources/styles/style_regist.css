@@ -1,0 +1,81 @@
+.out_container{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+    grid-template-rows: repeat(12,1fr);
+}
+.handler{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    grid-column: 5/9;
+    grid-row: 6/7;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 10px;
+    background-color: rgb(61, 158, 87);
+}
+.arrow{
+    align-self: flex-start;
+}
+.top_text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.top_text p {
+    color: white ;
+    font-size: large;
+}
+.top_text img{
+    max-width: 80%;
+}
+.top_text input{
+    height: 30px;
+    border-style:solid;
+    border-width: 0.3px;
+    border-radius: 5px;
+}
+.act{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.act input{
+    display: block;
+    margin: 5px;
+}
+.warning_log{
+    display: none;
+}
+.warning_log p {
+    width: 200px;
+}
+.warning_pass{
+    display: none;
+}
+
+.warning_pass p{
+
+}
+#warning_ok{
+    display: inline-block;
+    position: relative;
+    background-color: rgb(43, 113, 174);
+    /* background-image: url('path/to/your/image.jpg');
+    background-size: cover; Изображение будет масштабироваться, чтобы покрыть весь div */
+}
+.btn_go{
+
+    border-radius: 8px;
+    border-width: 0.3px;
+}
+.btn_regist{
+    margin-bottom: 5px;
+    border-radius: 8px;
+    border-width: 0.3px;
+}

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/redis/go-redis/v9"
+	"strconv"
 	"time"
 )
 
@@ -38,55 +39,57 @@ func (r *HandlerRedis) GetPostHashtagHash(hashtags []string, limit, offset strin
 		"LIMIT", offset, limit,
 	).Result()
 	if err != nil {
-		return nil, fmt.Errorf("Problem to return data from redis:%w", err)
+		return nil, fmt.Errorf("Problem to return data from redis:%v", err)
 	}
-	var posts []models.Post
+	massive, _ := strconv.Atoi(limit)
+	posts := make([]models.Post, 0, massive)
 	var post models.Post
 	result := res.([]interface{})
-	for i := 1; i < len(result); i += 2 {
-		fields := result[i+1].([]interface{})
-		postRedis := fields[1].(string)
-		err = json.Unmarshal([]byte(postRedis), &post)
-		if err != nil {
-			logger.GetLogger().Info("Problem to convert data to posthashtag struct", "err", err)
-			continue
+	for i := 1; i < len(result); i++ {
+		if i%2 == 0 {
+			postString := result[i].([]interface{})[1].(string)
+			err = json.Unmarshal([]byte(postString), &post)
+			if err != nil {
+				fmt.Println(err)
+			}
+			posts = append(posts, post)
 		}
-		posts = append(posts, post)
 	}
 	return posts, nil
 }
+
 func (r *HandlerRedis) GetPostHash(postIds []string) ([]models.Post, []string, error) {
-	pipe := r.storage.RStorage.Pipeline()
-	cmds := make([]*redis.StringCmd, len(postIds))
 	ctx := context.Background()
-	for i, postId := range postIds {
-		cmds[i] = pipe.Get(ctx, fmt.Sprintf("Post_id:%s", postId))
+	pipe := r.storage.RStorage.Pipeline()
+	cmds := make([]*redis.Cmd, len(postIds))
+	posts := make([]models.Post, 0, len(postIds))
+	existPostIds := make([]string, 0, len(postIds))
+	for i := 0; i < len(postIds); i++ {
+		cmds[i] = pipe.Do(ctx, "JSON.GET", fmt.Sprintf("Post_id:%s", postIds[i]))
 	}
 	_, err := pipe.Exec(ctx)
 	if err != nil {
-		return nil, nil, fmt.Errorf("problem to connect any statement for send query to redis:%w", err)
+		if err != redis.Nil {
+			logger.GetLogger().Error("Problem to pipe redis data", "err", err)
+			return nil, nil, fmt.Errorf("problem to connect any statement for send query to redis:%w", err)
+		}
 	}
-	posts := make([]models.Post, len(postIds))
-	var existsPostsIds []string
-	var data []byte
-	for i, cmd := range cmds {
-		data, err = cmd.Bytes()
-		if err == redis.Nil {
-			logger.GetLogger().Error("Data is empty", "err", err)
+	for i := 0; i < len(postIds); i++ {
+		data, err := cmds[i].Result()
+		if err != nil {
+			logger.GetLogger().Error("Problem to Json.Get", "err", err)
 			continue
 		}
-		if err != nil {
-			return nil, nil, err
-		}
 		var post models.Post
-		err = json.Unmarshal(data, &post)
+		err = json.Unmarshal([]byte(data.(string)), &post)
 		if err != nil {
-			return nil, nil, err
+			continue
 		}
-		existsPostsIds = append(existsPostsIds, post.PostID)
-		posts[i] = post
+		existPostIds = append(existPostIds, post.PostID)
+		posts = append(posts, post)
 	}
-	return posts, existsPostsIds, nil
+	fmt.Println(existPostIds, "найденные id")
+	return posts, existPostIds, nil
 }
 func (r *HandlerRedis) CreatePopularPostHash(posts []models.Post) error {
 	pipe := r.storage.RStorage.Pipeline()
@@ -96,7 +99,8 @@ func (r *HandlerRedis) CreatePopularPostHash(posts []models.Post) error {
 			return fmt.Errorf("problem to marshal post to redis:%w", err)
 		}
 		ctx := context.Background()
-		pipe.Set(ctx, fmt.Sprintf("Post_id:%s", post.PostID), jsonPost, 0)
+		pipe.Do(ctx, "JSON.SET", fmt.Sprintf("Post_id:%s", post.PostID), "$", jsonPost)
+
 	}
 	ctx := context.Background()
 	_, err := pipe.Exec(ctx)

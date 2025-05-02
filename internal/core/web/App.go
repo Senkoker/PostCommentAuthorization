@@ -35,6 +35,7 @@ func App() {
 	server := server2.Server(cfg.Server.Host, cfg.Server.Port)
 	server.FeedHandler(postsDomain)
 	server.ProfileHandler(profileHandler)
+	//server.MessengerHandler()
 	server.Auth("localhost", 8080)
 	server.Run()
 }

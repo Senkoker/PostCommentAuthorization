@@ -1,0 +1,48 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    height: 50px;
+    border-bottom: 1px solid rgb(0, 0, 0);
+}
+.header>ul{
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+}
+
+.header>ul>li{
+    margin: 5px;
+
+}
+
+.headerImg{
+    width: 250%;
+    height: 250%;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+}
+
+.left{
+    grid-column: 1/4;
+    border-right: 1px solid black;
+    height: 100vh;
+}
+
+.left>ul{
+    list-style: none;
+    margin-top: 20px;
+    margin-left: 40px;
+}
+
+.left>ul>li{
+    padding: 5px;
+    margin: 2px;
+}
+.left>ul>li:hover{
+    background-color:gray ;
+    border-radius: 3px;
+}

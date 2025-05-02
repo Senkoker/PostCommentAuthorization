@@ -1,0 +1,74 @@
+.out_container{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+    grid-template-rows: repeat(12,1fr);
+}
+.handler{
+    grid-column: 5/9;
+    grid-row: 6/7;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 10px;
+    background-color: rgb(61, 158, 87);
+}
+.handler>a{
+    padding: 10px;
+}
+.top_text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 5px;
+}
+.top_text p {
+    color: white ;
+    font-size: large;
+}
+.top_text img{
+    max-width: 100%;
+}
+.top_text input{
+    height: 30px;
+    border-style:solid;
+    border-width: 0.3px;
+    border-radius: 5px;
+}
+.act{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.act input{
+    display: block;
+    margin: 5px;
+}
+.warning{
+    display: none;
+}
+#warning_ok{
+    display: block;
+    position: absolute;
+    background-color: aliceblue;
+    /* background-image: url('path/to/your/image.jpg');
+    background-size: cover; Изображение будет масштабироваться, чтобы покрыть весь div */
+    
+}
+.btn_go{
+    width: 100px;
+    margin-left:40px ;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    border-width: 0.3px;
+}
+.btn_regist{
+    margin-bottom: 5px;
+    border-radius: 8px;
+    border-width: 0.3px;
+}
+.btn_regist a{
+    text-decoration: none;
+}

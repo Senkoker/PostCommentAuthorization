@@ -2,6 +2,7 @@ package httpPostAndComment
 
 import (
 	"VK_posts/internal/models"
+	"fmt"
 	"github.com/labstack/echo"
 	"net/http"
 	"strings"
@@ -88,14 +89,22 @@ func (p *Port) GetPosts() echo.HandlerFunc {
 		//Todo: сравнить совпадают ли Keys
 		var usersPosts models.InterestingPost
 		err := c.Bind(&usersPosts)
+		fmt.Println(usersPosts)
 		if err != nil {
+			fmt.Println("Ошибка здесь")
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 		hashtagsStr := usersPosts.Hashtags
+		var hashtags []string
+		if hashtagsStr != "" {
+			hashtags = strings.Split(hashtagsStr, "@")
+			hashtags = hashtags[1:]
+		}
 		limit := c.QueryParam("limit")
 		offset := c.QueryParam("offset")
 		redisStatus := c.QueryParam("redis")
-		hashtags := strings.Split(hashtagsStr, "@")
+		fmt.Println(hashtags, limit, offset, redisStatus)
+		fmt.Println(len(hashtags))
 		if hashtags == nil {
 			posts, err := p.Domain.FeedGetPosts(usersPosts.PostsIDs)
 			if err != nil {
@@ -104,6 +113,7 @@ func (p *Port) GetPosts() echo.HandlerFunc {
 			}
 			return c.JSON(http.StatusOK, models.GetPostResponse{Posts: posts})
 		}
+		fmt.Println("C хэштэгами")
 		posts, err := p.Domain.FeedGetPostsWithHashtag(hashtags, limit, offset, redisStatus)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())

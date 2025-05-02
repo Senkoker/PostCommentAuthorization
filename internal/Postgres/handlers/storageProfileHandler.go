@@ -16,7 +16,8 @@ func NewProfileHandler(storage *Postgres.Storage) *StorageProfileHandler {
 }
 
 func (s *StorageProfileHandler) PGFillUserProfile(profile models.ProfileFill) (string, error) {
-	stmt, err := s.storage.Db.Prepare("INSERT INTO users_info(user_id,first_name,second_name,img_url,birth_day,education,country,city) VALUES ($1,$2,$3,$4,$5,$6,$7) returning id")
+	fmt.Println(profile)
+	stmt, err := s.storage.Db.Prepare("INSERT INTO users_info(user_id,first_name,second_name,img_url,birth_date,education,country,city) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) returning id")
 	defer stmt.Close()
 	if err != nil {
 		return "", fmt.Errorf("Problem preparing storage FillUserPRofile: %w", err)
@@ -36,7 +37,7 @@ func (s *StorageProfileHandler) PGFillUserProfile(profile models.ProfileFill) (s
 }
 
 func (s *StorageProfileHandler) PGGetUserProfile(username string) (models.ProfileFill, error) {
-	stmt, err := s.storage.Db.Prepare("SELECT user_id,first_name,second_name,img_url,birth_day,education,country,city FROM users_info where user_id=$1")
+	stmt, err := s.storage.Db.Prepare("SELECT user_id,first_name,second_name,img_url,birth_date,education,country,city FROM users_info where user_id=$1")
 	defer stmt.Close()
 	if err != nil {
 		return models.ProfileFill{}, fmt.Errorf("Problem preparing storage PGGetUserPRofile: %w", err)
@@ -48,7 +49,7 @@ func (s *StorageProfileHandler) PGGetUserProfile(username string) (models.Profil
 		return models.ProfileFill{}, fmt.Errorf("Problem to return data PGGetUserPRofile: %w", err)
 	}
 	var profile models.ProfileFill
-	err = row.Scan(&profile)
+	err = row.Scan(&profile.UserID, &profile.FirstName, &profile.SecondName, &profile.ImgURL, &profile.BirthDate, &profile.Education, &profile.Country, &profile.City)
 	if err != nil {
 		return models.ProfileFill{}, fmt.Errorf("Problem to scan PGGetUserPRofile: %w", err)
 	}

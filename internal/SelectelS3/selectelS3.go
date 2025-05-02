@@ -45,7 +45,7 @@ func (s3 *SelectelS3) SendImage(img *multipart.FileHeader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	selectelPath := "https://8b3c3d07-9708-4c63-93a0-758ae7a7ee89.selstorage.ru" + "/" + objectKey
+	selectelPath := "https://5276b8b8-98cf-4ec9-b650-7910c5dcc0ab.selstorage.ru" + "/" + objectKey
 
 	return selectelPath, nil
 

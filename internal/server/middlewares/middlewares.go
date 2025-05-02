@@ -42,7 +42,10 @@ func InformationAboutRequest(next echo.HandlerFunc) echo.HandlerFunc {
 		timeStart := time.Now()
 		logger.GetLogger().Info("Data of request", "method", method, "ip", ip, "url", url)
 		err := next(c)
-		logger.GetLogger().Error("Problem with request", "method", method, "ip", ip, "url", url, "err", err)
+		if err != nil {
+			logger.GetLogger().Error("Problem with request", "method", method, "ip", ip, "url", url, "err", err)
+		}
+		logger.GetLogger().Info("RequestInfo", "method", method, "ip", ip, "url", url)
 		timeNow := time.Now()
 		logger.GetLogger().Info("Time of request", "Interval", timeNow.Sub(timeStart).Seconds())
 		return err

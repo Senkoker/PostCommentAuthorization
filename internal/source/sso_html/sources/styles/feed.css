@@ -1,0 +1,128 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Отключаем прокрутку для всей страницы */
+    font-family: Arial, sans-serif;
+}
+.header{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    height: 50px;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    position: relative
+}
+.header>ul{
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+}
+
+.header>ul>li{
+    margin: 5px;
+
+}
+
+.headerImg{
+    width: 250%;
+    height: 250%;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+}
+
+.left{
+    grid-column: 1/4;
+    border-right: 1px solid black;
+    height: 100%;
+}
+
+.left>ul{
+    list-style: none;
+    margin-top: 20px;
+    margin-left: 40px;
+}
+
+.left>ul>li{
+    padding: 5px;
+    margin: 2px;
+}
+
+.left>ul>li:hover{
+    background-color:gray ;
+    border-radius: 3px;
+}
+
+.right{
+    grid-column: 8/13;
+}
+
+.center{
+    grid-column: 4/9;
+    overflow-y: auto;
+    height: 100vh
+}
+
+/* Логика поста */
+.post{
+    border: 1px solid black;
+    border-radius: 3px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.postHeader{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid black;
+    height: 50px;
+}
+
+.imgUser{
+    height:50px;
+    width: 50px;
+}
+
+.postImage{
+    height:50%;
+    width: 50%;
+}
+
+.postContent{
+    width: 100%;
+}
+
+.postInfo{
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid black;
+}
+#content{
+    max-width: 100vh;
+    min-width: 100px;
+    min-height: 100px;
+    max-height: 220px;
+
+}
+.createPostMenu{
+    display: none;
+    justify-content: center;
+    flex-direction: column;
+    max-width: 100vh;
+    position: fixed;
+    z-index: 1;
+    top: -150px;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+
+.closeMenu{
+    align-self: end;
+}

@@ -3,9 +3,9 @@ package profile
 import (
 	"VK_posts/internal/domain"
 	"VK_posts/internal/models"
+	"fmt"
 	"github.com/labstack/echo"
 	"net/http"
-	"time"
 )
 
 type PortProfile struct {
@@ -27,10 +27,7 @@ func FillProfile(profilePort *PortProfile) echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
-		birth, err := time.Parse("2006-01-02", c.Request().FormValue("birth_date"))
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		}
+		birth := c.Request().FormValue("birth_date")
 		profile := models.ProfileFill{
 			UserID:     c.Get("userID").(string),
 			FirstName:  c.Request().FormValue("first_name"),
@@ -41,6 +38,7 @@ func FillProfile(profilePort *PortProfile) echo.HandlerFunc {
 			Image:      img,
 			City:       c.Request().FormValue("city"),
 		}
+		fmt.Println(profile)
 		id, err := profilePort.PortProfileInterface.FillUserProfile(profile)
 		if err != nil {
 			//Todo обработать ошибки
@@ -52,7 +50,7 @@ func FillProfile(profilePort *PortProfile) echo.HandlerFunc {
 }
 func GetProfile(profilePort *PortProfile) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userId := c.QueryParam("userId")
+		userId := c.QueryParam("userID")
 		userProfile, err := profilePort.PortProfileInterface.GetUserProfile(userId)
 		if err != nil {
 			//todo: обработать ошибки

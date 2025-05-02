@@ -31,7 +31,7 @@ type Post struct {
 }
 
 type NewComment struct {
-	ReplyTo   string    `json:"repy_to"`
+	ReplyTo   string    `json:"reply_to"`
 	AuthorID  string    `json:"author_id"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
@@ -44,7 +44,7 @@ type UserInfo struct {
 }
 
 type MainComment struct {
-	PostID       string    `json:"post_id"`
+	CommentID    string    `json:"comment_id"`
 	AuthorID     string    `json:"author_id"`
 	AuthorName   string    `json:"author"`
 	AuthorImgUrl string    `json:"author_img"`

@@ -53,7 +53,7 @@ func (e *Router) Auth(address string, port int) {
 	auth := e.router.Group("/auth")
 	auth.Use(middlewares.InformationAboutRequest)
 	auth.POST("/login", httpAuth.LoginHandler(authClient))
-	auth.POST("/accepter", httpAuth.Accept(authClient))
+	auth.GET("/accepter", httpAuth.Accept(authClient))
 	auth.POST("/register", httpAuth.RegisterHandler(authClient))
 }
 func (e *Router) ProfileHandler(profilePort *profile2.PortProfile) {
@@ -63,4 +63,9 @@ func (e *Router) ProfileHandler(profilePort *profile2.PortProfile) {
 	profile.GET("/get_profile", profile2.GetProfile(profilePort))
 }
 
-func (e *Router) MessengerHandler() {}
+//func (e *Router) MessengerHandler() {
+//	message := e.router.Group("/messenger")
+//	message.Use(middlewares.CheckTokenMiddleware)
+//	message.GET("/find_user")
+//
+//}

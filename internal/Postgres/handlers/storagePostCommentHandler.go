@@ -7,6 +7,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -72,15 +74,18 @@ func (s *StorageHandler) GetPosts(postIDS []string) ([]models.Post, []string, er
 	var post models.Post
 	var posts []models.Post
 	var users []string
+	var tagids string
 
 	for row.Next() {
-		err = row.Scan(&post.PostID, &post.AuthorId, &post.TagsIds, &post.Content, &post.CreatedAt, &post.Watched, &post.Likes)
+		err = row.Scan(&post.PostID, &post.AuthorId, &tagids, &post.Content, &post.CreatedAt, &post.Watched, &post.Likes)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				logger.GetLogger().Error("Post does not exist")
 			}
 			continue
 		}
+		tagsSlice := strings.Split(tagids[1:len(tagids)-1], ",")
+		post.TagsIds = tagsSlice
 		posts = append(posts, post)
 		users = append(users, post.AuthorId)
 	}
@@ -89,27 +94,29 @@ func (s *StorageHandler) GetPosts(postIDS []string) ([]models.Post, []string, er
 }
 
 func (s *StorageHandler) GetPostWithHashtags(hashtags []string, limit, offset string) ([]models.Post, []string, error) {
-	stmt, err := s.storage.Db.Prepare(getPostsWithHashtag)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to prepare GetPosts: %w", err)
-	}
 	ctx := context.Background()
-	row, err := stmt.QueryContext(ctx, hashtags, limit, offset)
+	fmt.Println(hashtags)
+	row, err := s.storage.Db.QueryContext(ctx, getPostsWithHashtag, hashtags, limit, offset)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to query GetPostsWithHashtags: %w", err)
 	}
 	var post models.Post
-	var posts []models.Post
-	var users []string
-
+	capacity, _ := strconv.Atoi(limit)
+	posts := make([]models.Post, 0, capacity)
+	users := make([]string, 0, capacity)
+	var tagsIDS string
 	for row.Next() {
-		err = row.Scan(&post.PostID, &post.AuthorId, &post.TagsIds, &post.Content, &post.CreatedAt, &post.Watched, &post.Likes)
+		err = row.Scan(&post.PostID, &post.AuthorId, &tagsIDS, &post.Content, &post.CreatedAt, &post.Watched, &post.Likes)
+		fmt.Println(post, tagsIDS, "Все что на выходе")
 		if err != nil {
 			if err == sql.ErrNoRows {
 				logger.GetLogger().Error("Post with hashtag does not exist")
 			}
+			logger.GetLogger().Error("Problem to scan", "err", err)
 			continue
 		}
+		tagID := strings.Split(tagsIDS[1:len(tagsIDS)-1], ",")
+		post.TagsIds = tagID
 		posts = append(posts, post)
 		users = append(users, post.AuthorId)
 	}
@@ -147,6 +154,7 @@ func (s *StorageHandler) CreateComment(comment models.NewComment) (string, error
 func (s *StorageHandler) GetMainComment(postID, limit, offset string) ([]models.MainComment, []string, error) {
 	stmt, err := s.storage.Db.Prepare(getMainComment)
 	if err != nil {
+		logger.GetLogger().Error("Problem", "err", err)
 		return nil, nil, err
 	}
 	var mainComment models.MainComment
@@ -154,12 +162,17 @@ func (s *StorageHandler) GetMainComment(postID, limit, offset string) ([]models.
 	var users []string
 	ctx := context.Background()
 	rows, err := stmt.QueryContext(ctx, postID, limit, offset)
+	if err != nil {
+		logger.GetLogger().Error("Problem", "err", err)
+		return nil, nil, err
+	}
 	for rows.Next() {
-		err = rows.Scan(&mainComment.PostID, &mainComment.AuthorID, &mainComment.Content, &mainComment.CreatedAt)
+		err = rows.Scan(&mainComment.CommentID, &mainComment.AuthorID, &mainComment.Content, &mainComment.CreatedAt)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				logger.GetLogger().Error("Main comment does not exist")
 			}
+			logger.GetLogger().Error("Problem to scan", "err", err)
 			continue
 		}
 		users = append(users, mainComment.AuthorID)

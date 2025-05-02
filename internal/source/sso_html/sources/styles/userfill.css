@@ -1,0 +1,30 @@
+.body{
+    height: 100vh;
+}
+.grid{
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+    grid-template-rows: repeat(12,1fr);
+}
+.data{
+    display: flex;
+    flex-direction: column;
+    grid-row:3/8;
+    grid-column: 5/8;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+.data>input{
+    margin: 10px;
+}
+.data>span{
+    margin-left: 30px
+}
+.headerForm{
+    text-align: center;
+}
+.go_btn{
+    align-self: center;
+    width: 60px;
+    height: 20px;
+}
