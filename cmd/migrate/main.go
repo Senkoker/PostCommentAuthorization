@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
 	"github.com/pressly/goose/v3"
 	"log"
 )
@@ -29,11 +28,7 @@ func main() {
 	var command string
 	flag.StringVar(&command, "command", "up", "command for migration")
 	flag.Parse()
-	err := godotenv.Load("C:\\Golang_social_project\\VK_posts\\.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	err = cleanenv.ReadEnv(migration)
+	err := cleanenv.ReadEnv(migration)
 	if err != nil {
 		log.Fatal("Problem with check env")
 	}

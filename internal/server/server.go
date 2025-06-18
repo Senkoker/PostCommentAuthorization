@@ -1,17 +1,25 @@
 package server
 
 import (
+	"VK_posts/graph"
 	"VK_posts/internal/domain"
 	"VK_posts/internal/server/httpAuth"
 	"VK_posts/internal/server/httpPostAndComment"
 	"VK_posts/internal/server/middlewares"
 	profile2 "VK_posts/internal/server/profile"
+	"VK_posts/pkg/Postgres"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/vektah/gqlparser/v2/ast"
 	"log"
 	"net"
 	"net/http"
 	"strconv"
+
+	"github.com/99designs/gqlgen/graphql/handler/lru"
 )
 
 type Router struct {
@@ -35,7 +43,24 @@ func (e *Router) Run() {
 		log.Fatal(err)
 	}
 }
+func (e *Router) GraphQLHandler(postgresDb Postgres.Storage) {
+	friends := e.router.Group("/friends")
+	friends.Use(middlewares.CheckTokenMiddleware)
+	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{postgresDb.Db}}))
 
+	srv.AddTransport(transport.Options{})
+	srv.AddTransport(transport.POST{})
+
+	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
+
+	srv.Use(extension.Introspection{})
+	srv.Use(extension.AutomaticPersistedQuery{
+		Cache: lru.New[string](100),
+	})
+
+	friends.POST("/query", echo.WrapHandler(srv))
+
+}
 func (e *Router) FeedHandler(postDomain *domain.Domain) {
 	postHandler := httpPostAndComment.NewHandlers(postDomain)
 	feed := e.router.Group("/feed")

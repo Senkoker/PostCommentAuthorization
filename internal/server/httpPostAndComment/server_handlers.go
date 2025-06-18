@@ -28,7 +28,9 @@ func (p *Port) CreatePost() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authorId := c.Get("userID").(string)
 		hashtagsStr := c.Request().FormValue("hashtags")
-		hashtags := strings.Split(hashtagsStr, "@")
+		hashtags := strings.Split(hashtagsStr, "#")
+		hashtags = hashtags[1:]
+		fmt.Println("HASTAGS", hashtags)
 		content := c.Request().FormValue("content")
 		_, img, err := c.Request().FormFile("img")
 		if err != nil {
@@ -97,7 +99,8 @@ func (p *Port) GetPosts() echo.HandlerFunc {
 		hashtagsStr := usersPosts.Hashtags
 		var hashtags []string
 		if hashtagsStr != "" {
-			hashtags = strings.Split(hashtagsStr, "@")
+			hashtags = strings.Split(hashtagsStr, "#")
+			fmt.Println("Hashtags test")
 			hashtags = hashtags[1:]
 		}
 		limit := c.QueryParam("limit")

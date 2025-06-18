@@ -59,13 +59,17 @@ type RedisPostHashInterface interface {
 	GetPostHash(postIds []string) ([]models.Post, []string, error)
 	CreatePopularPostHash(post []models.Post) error
 }
-
+type KafkaProducer interface {
+	Produce(msg, topic string) error
+}
 type SelectelS3Interface interface {
 	SendImage(img *multipart.FileHeader) (string, error)
 }
 
-func NewDomain(postgresPostComment PostgresPostAndCommentInterface, postgresUserInfo PostgresUserInformationInterface, selectel SelectelS3Interface, redis RedisPostHashInterface) *Domain {
-	return &Domain{PostgresPostComment: postgresPostComment, PostgresUserInfo: postgresUserInfo, SelectelS3: selectel, Redis: redis}
+func NewDomain(postgresPostComment PostgresPostAndCommentInterface, postgresUserInfo PostgresUserInformationInterface,
+	selectel SelectelS3Interface, redis RedisPostHashInterface) *Domain {
+	return &Domain{PostgresPostComment: postgresPostComment, PostgresUserInfo: postgresUserInfo, SelectelS3: selectel,
+		Redis: redis}
 }
 func (d *Domain) FeedCreatePost(post models.NewPost) (string, error) {
 	op := "Domain CreatePost"
@@ -83,6 +87,7 @@ func (d *Domain) FeedCreatePost(post models.NewPost) (string, error) {
 	}
 	return uuid, nil
 }
+
 func (d *Domain) FeedCreateComment(comment models.NewComment) (string, error) {
 	op := "Domain CreateComment"
 	logger := logger.GetLogger().With("op", op)

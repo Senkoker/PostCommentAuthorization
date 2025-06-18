@@ -23,13 +23,36 @@ type User {
     country: String
     city: String
     friendIDs: [String]
-    postIDs: [String]
     subscribesIDs: [String]
     friends(limit: Int, offset: Int): [User]
     subscribes(limit: Int, offset: Int): [User]
     posts(limit: Int, offset: Int): [Post]
 }
 
+input NewPost{
+    authorID: String!
+    hashtags: String
+    content: String!
+    img: String
+    private: Boolean!
+
+}
+
+input NewComment{
+    replyTo: String!
+    authorID: String!
+    content: String!
+    createdAt: String!
+}
+
 type Query {
-    User(userID: ID!): User
+    UserInfo(userID: ID!): User
+    GetPost(postID: [String!]): [Post]
+    GetPostWithHashtag(hashtags: String!,limit: Int!, offset: Int!):[Post]
+}
+
+type Mutation {
+    createPost(input:NewPost!): String
+    deletePost(input:String!): String
+    createComment(input: NewComment!): String
 }

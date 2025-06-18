@@ -1,0 +1,43 @@
+services:
+  backendPostComment:
+    image: backendpostcomment:1
+    hostname: postCommentAuthorizationBackend
+    container_name: backendPostComment
+    ports:
+      - "8082:8082"
+    env_file:
+      - ./.env
+    networks:
+      - project
+    depends_on:
+      - redis
+
+  goose_migration:
+    image: migrationcommentpost:1
+    container_name: migrationCommentPostBackend
+    networks:
+      - project
+    env_file:
+        - ./.env
+
+  redis:
+    image: redislabs/redisearch
+    container_name: redisSearch
+    hostname: redisSearch
+    environment:
+      - REDIS_PASSWORD=my_pass
+    networks:
+      - project
+    volumes:
+      - redis_data:/data
+networks:
+  project:
+    external: true
+volumes:
+  redis_data:
+    name: redis_data
+
+
+
+
+
