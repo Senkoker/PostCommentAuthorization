@@ -4,7 +4,7 @@
 3) перейдите в директорию PostCommentAuthorization и введите make 
 
 Функционал проекта:
-Для более лучшей демонстрации написаны простенькие html страницы с js кодом (путь ./internal/source/sso_html/sources). Также будут показаны запросы в Postman. На данный момент проект переделывается под graphQL c использованием kafka.
+Для более лучшей демонстрации написаны простенькие html страницы с js кодом (путь ./internal/source/sso_html/sources). Также будут показаны запросы в Postman. На данный момент проект переделывается под graphQL c использованием kafka (https://github.com/Senkoker/TestGraphQL_PostCommentAuthorization) 
 
 Регистрация (смотри html - register.html)
 ![image](https://github.com/user-attachments/assets/c3aaccd1-81cb-4490-8f00-82d3ef987dcb)
