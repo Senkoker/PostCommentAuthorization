@@ -45,6 +45,7 @@ fetch запрос через js
 ![image](https://github.com/user-attachments/assets/b5116ba8-8888-4f86-af19-1bd084f92c0c)
 
 копируем полученный id 
+
 ![image](https://github.com/user-attachments/assets/4868a5fb-eea2-4777-853c-5d5ede3fb222)
 
 полученный id вставляем в поиск, получаем 
