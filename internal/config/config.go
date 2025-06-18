@@ -18,7 +18,7 @@ type Config struct {
 }
 
 type Server struct {
-	Host string `env:"SERVER_HOST" env-default:"localhost"`
+	Host string `env:"SERVER_HOST" env-default:"0.0.0.0"`
 	Port int    `env:"SERVER_PORT" env-default:"8082"`
 }
 

@@ -36,6 +36,6 @@ func App() {
 	server.FeedHandler(postsDomain)
 	server.ProfileHandler(profileHandler)
 	//server.MessengerHandler()
-	server.Auth("localhost", 8080)
+	server.Auth("sso_backend", 8080)
 	server.Run()
 }
